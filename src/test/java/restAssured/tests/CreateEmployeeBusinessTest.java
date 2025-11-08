@@ -36,7 +36,15 @@ public class CreateEmployeeBusinessTest {
     @DisplayName("Создание сотрудника")
     public void createEmployee() {
         int employeeId = employeeHelper.createEmployee(new EmployeeRequest("Barcelona", "Test5", "driver", "Testov"));
-        EmployeeResponse employee = employeeHelper.getEmployee(employeeId);
+        EmployeeResponse employee = employeeHelper.getEmployee(employeeId);  //ИСПОЛЬЗОВАТЬ БД
+        //Преимущества БД:
+        //1.Стабильность
+        //2.Быстрота запроса к БД
+        //Недостатки БД:
+        //1.Иногда 1 эндпоинт выполняет не просто создание объекта в 1табл, а может запускать целую цепочку событий
+        //2.Может не быть доступа к БД
+        //3.Подключение к БД и написание запросов может быть сложнее, чем отправки АПИ запроса
+        //4.Процессы могут меняться
         assertEquals(employeeId, employee.getId());
     }
 
