@@ -17,6 +17,10 @@ public class EnvHelper {
         properties.load(new FileInputStream(appConfigPath));
     }
 
+    public Properties getProperties() {
+        return properties;
+    }
+
     public String getConnectionString() {
         return properties.getProperty("db.connectionString");
     }
