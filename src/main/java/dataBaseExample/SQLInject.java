@@ -12,7 +12,7 @@ public class SQLInject {
 //        int id = scanner.nextInt();
 //        ResultSet resultSet = getEmployeeById(id);
         String city = scanner.nextLine();
-        ResultSet resultSet = getEmployeeById(city);
+        ResultSet resultSet = getEmployeeByCity(city);
 
         while (resultSet.next()) {
             System.out.println(resultSet.getString("name"));
@@ -29,7 +29,7 @@ public class SQLInject {
         return DriverManager.getConnection(connectionString, username, password);
     }
 
-    public static ResultSet getEmployeeById(String city) throws SQLException {
+    public static ResultSet getEmployeeByCity(String city) throws SQLException {
         String SELECT_NAME_SURNAME = "SELECT name, surname, position From employee where city = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(SELECT_NAME_SURNAME);
         preparedStatement.setString(1, city);

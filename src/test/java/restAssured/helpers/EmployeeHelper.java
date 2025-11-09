@@ -7,10 +7,12 @@ import restAssured.entites.EmployeeRequest;
 import restAssured.entites.EmployeeResponse;
 import restAssured.entites.User;
 
+import java.sql.*;
+
 import static io.restassured.RestAssured.baseURI;
 import static io.restassured.RestAssured.given;
 
-public class EmployeeHelper {
+public class EmployeeHelper extends AbstractHelper {
 
     private AuthHelper authHelper;
 
@@ -33,7 +35,8 @@ public class EmployeeHelper {
         }
     }
 
-    public EmployeeResponse getEmployee(int id) {
+    public static EmployeeResponse getEmployee(int id) throws Exception {
+
         Response response = given().
                 when().
                 get("/employee/" + id);

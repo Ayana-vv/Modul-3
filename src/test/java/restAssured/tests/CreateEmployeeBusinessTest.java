@@ -9,7 +9,10 @@ import restAssured.entites.EmployeeRequest;
 import restAssured.entites.EmployeeResponse;
 import restAssured.helpers.AuthHelper;
 import restAssured.helpers.EmployeeHelper;
+import restAssured.helpers.EmployeeHelperDB;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 import static io.restassured.RestAssured.baseURI;
@@ -20,23 +23,21 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class CreateEmployeeBusinessTest {
 
-    private EmployeeHelper employeeHelper;
+    private static EmployeeHelper employeeHelper;
+    private static EmployeeHelperDB employeeHelperDB;
 
     @BeforeAll
-    public static void setUri() {
+    public static void setUri() throws SQLException, IOException {
         baseURI = "https://innopolispython.onrender.com";
-    }
-
-    @BeforeEach
-    public void setUp(){
         employeeHelper = new EmployeeHelper();
+        employeeHelperDB = new EmployeeHelperDB();
     }
 
     @Test
     @DisplayName("Создание сотрудника")
-    public void createEmployee() {
-        int employeeId = employeeHelper.createEmployee(new EmployeeRequest("Barcelona", "Test5", "driver", "Testov"));
-        EmployeeResponse employee = employeeHelper.getEmployee(employeeId);  //ИСПОЛЬЗОВАТЬ БД
+    public void createEmployee() throws Exception {
+        int employeeId = employeeHelper.createEmployee(new EmployeeRequest("Barcelona", "Test1", "driver", "Testov"));
+        EmployeeResponse employee = employeeHelperDB.getEmployee(employeeId);  //ИСПОЛЬЗОВАТЬ БД
         //Преимущества БД:
         //1.Стабильность
         //2.Быстрота запроса к БД
@@ -50,9 +51,9 @@ public class CreateEmployeeBusinessTest {
 
     @Test
     @DisplayName("Создание сотрудника с пустым полем")
-    public void createEmployeeWithEmptyBody() {
+    public void createEmployeeWithEmptyBody() throws Exception {
         int employeeId = employeeHelper.createEmployee(new EmployeeRequest());
-        EmployeeResponse employee = employeeHelper.getEmployee(employeeId);
+        EmployeeResponse employee = employeeHelperDB.getEmployee(employeeId);
         assertEquals(employee.getId(),0);
         assertNull(employee.getName());
         assertEquals(-1, employeeId);
