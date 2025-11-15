@@ -1,4 +1,4 @@
-package restAssured.entites;
+package attestation3.enitities;
 
 public class EmployeeRequest {
     private String city;

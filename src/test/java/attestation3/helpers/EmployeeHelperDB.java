@@ -1,7 +1,8 @@
-package restAssured.helpers;
+package attestation3.helpers;
 
-import restAssured.entites.EmployeeRequest;
-import restAssured.entites.EmployeeResponse;
+import attestation3.enitities.EmployeeRequest;
+import attestation3.enitities.EmployeeResponse;
+import restAssured.helpers.AbstractHelper;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -31,7 +32,7 @@ public class EmployeeHelperDB extends AbstractHelper {
             return resultSet.getInt("id");
         }
         else {
-            return  -1;
+            return -1;
         }
     }
 
@@ -78,7 +79,7 @@ public class EmployeeHelperDB extends AbstractHelper {
     public EmployeeResponse getEmployeeToNotExistName(String name) throws Exception {
         String SELECT_NAME = "SELECT * From employee where name = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(SELECT_NAME);
-        preparedStatement.setString(1, "testXXX");
+        preparedStatement.setString(1, "testXXX");              //несуществующий name
 
         ResultSet resultSet = preparedStatement.executeQuery();
         if (resultSet.next()) {
@@ -95,9 +96,51 @@ public class EmployeeHelperDB extends AbstractHelper {
         }
     }
 
-    public void deleteEmployee(int id) {
-        given().
-        when().
-                delete("/employee/" + id);
+    public int deleteEmployee(int id) throws SQLException {
+        String DELETE_EMPLOYEE = "DELETE From employee where id = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(DELETE_EMPLOYEE, Statement.RETURN_GENERATED_KEYS);
+        preparedStatement.setInt(1, id);
+
+        preparedStatement.executeUpdate();
+        ResultSet resultSet = preparedStatement.getGeneratedKeys();
+        if (resultSet.next()) {
+            return resultSet.getInt("id");
+        }
+        else {
+            return -1;
+        }
+    }
+
+    public int updateEmployeeName(int employeeId, String employeeNewName) throws SQLException {
+        String UPDATE_EMPLOYEE = "UPDATE employee SET name = ? where id = ? ";
+        PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_EMPLOYEE);
+        preparedStatement.setString(1, employeeNewName);
+        preparedStatement.setInt(2, employeeId);
+        return preparedStatement.executeUpdate();
+    }
+
+    public EmployeeResponse updateEmployee(int employeeId, EmployeeRequest employee) throws Exception {
+        String UPDATE_EMPLOYEE = "UPDATE employee SET name = ?, surname = ?, city = ?, position = ? where id = ? ";
+        PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_EMPLOYEE);
+        preparedStatement.setString(1, employee.getName());
+        preparedStatement.setString(2, employee.getSurname());
+        preparedStatement.setString(3, employee.getCity());
+        preparedStatement.setString(4, employee.getPosition());
+        preparedStatement.setInt(5, employeeId);
+
+        int result = preparedStatement.executeUpdate();
+        if (result > 0) {
+            return getEmployee(employeeId);
+        } else {
+            return new EmployeeResponse();
+        }
+    }
+
+    public int updateEmployeeWrongTypeField(int employeeId, int employeeNewCity) throws SQLException {
+        String UPDATE_EMPLOYEE = "UPDATE employee SET city = ? where id = ? ";
+        PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_EMPLOYEE);
+        preparedStatement.setInt(1, employeeNewCity);
+        preparedStatement.setInt(2, employeeId);
+        return preparedStatement.executeUpdate();
     }
 }
